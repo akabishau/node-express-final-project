@@ -1,12 +1,12 @@
 {
-  "name": "06-jobs-api",
+  "name": "book-worm-api",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js"
   },
-  "author": "",
+  "author": "Aleksey Kabishau",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
