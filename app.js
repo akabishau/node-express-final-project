@@ -15,6 +15,11 @@ app.get('/', (req, res) => {
   res.send('books api')
 });
 
+const authRouter = require('./routes/auth')
+app.use('/api/v1/auth', authRouter)
+
+
+
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
 
