@@ -12,12 +12,15 @@ app.use(express.json());
 
 // routes
 app.get('/', (req, res) => {
-  res.send('books api')
+  res.send('transactions api')
 });
 
 const authRouter = require('./routes/auth')
 app.use('/api/v1/auth', authRouter)
 
+const authenticateUser = require('./middleware/authentication')
+const transactionsRouter = require('./routes/transactions')
+app.use('/api/v1/transactions', authenticateUser, transactionsRouter)
 
 
 app.use(notFoundMiddleware)
