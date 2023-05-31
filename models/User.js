@@ -26,12 +26,13 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
+// this is associated with the current document (user)
 
 // if password is modified, hash it before saving into db
 UserSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
-    console.log('hashing password before saving user')
+    //console.log('hashing password before saving user')
     next()
 })
 
@@ -42,6 +43,11 @@ UserSchema.methods.createJWT = function () {
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
     )
+}
+
+
+UserSchema.methods.comparePassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password)
 }
 
 module.exports = mongoose.model('User', UserSchema)
