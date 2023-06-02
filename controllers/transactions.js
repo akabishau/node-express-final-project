@@ -32,8 +32,6 @@ const getSingleTransaction = async (req, res) => {
 const createTransaction = async (req, res) => {
     req.body.createdBy = req.user.userId // add user Id to the request's body
     const transaction = await Transaction.create(req.body)
-    console.log(req.body)
-    console.log(transaction)
     res.status(StatusCodes.CREATED).json({
         status: 'Success',
         msg: `Transaction has been created`,

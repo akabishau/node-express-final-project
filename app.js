@@ -14,7 +14,7 @@ const cors = require('cors')
 app.use(cors())
 
 const xss = require('xss-clean')
-app.use(xss)
+app.use(xss())
 
 const rateLimiter = require('express-rate-limit')
 app.set('trust proxy', 1) // to deploy on heroku (render.com ?)
