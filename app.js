@@ -23,9 +23,7 @@ app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 })) // each IP 100 requ
 
 
 // routes
-app.get('/', (req, res) => {
-  res.send('transactions api')
-});
+app.use(express.static('./public'))
 
 const authRouter = require('./routes/auth')
 app.use('/api/v1/auth', authRouter)
