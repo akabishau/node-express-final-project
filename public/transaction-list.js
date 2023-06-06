@@ -270,27 +270,29 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 // this is an update
                 suspendInput = true;
+                console.log('editing tran')
                 try {
-                    const jobID = editJob.dataset.id;
-                    const response = await fetch(`/api/v1/jobs/${jobID}`, {
+                    const transId = editJob.dataset.id;
+                    const response = await fetch(`/api/v1/transactions/${transId}`, {
                         method: "PATCH",
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
                         },
                         body: JSON.stringify({
-                            company: company.value,
-                            position: position.value,
-                            status: status.value,
+                            transType: transType.value,
+                            category: category.value,
+                            amount: amount.value,
                         }),
                     });
                     const data = await response.json();
+                    console.log(data)
                     if (response.status === 200) {
                         message.textContent = "The entry was updated.";
                         showing.style.display = "none";
-                        company.value = "";
-                        position.value = "";
-                        status.value = "pending";
+                        transType.value = "expense";
+                        category.value = "";
+                        amount.value = "";
                         thisEvent = new Event("startDisplay");
                         document.dispatchEvent(thisEvent);
                     } else {
@@ -304,38 +306,39 @@ document.addEventListener("DOMContentLoaded", () => {
             suspendInput = false;
 
         } 
-        // section 5
-        // else if (e.target.classList.contains("editButton")) {
-        //     editJob.dataset.id = e.target.dataset.id;
-        //     suspendInput = true;
-        //     try {
-        //         const response = await fetch(`/api/v1/jobs/${e.target.dataset.id}`, {
-        //             method: "GET",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //                 Authorization: `Bearer ${token}`,
-        //             },
-        //         });
-        //         const data = await response.json();
-        //         if (response.status === 200) {
-        //             company.value = data.job.company;
-        //             position.value = data.job.position;
-        //             status.value = data.job.status;
-        //             showing.style.display = "none";
-        //             showing = editJob;
-        //             showing.style.display = "block";
-        //             addingJob.textContent = "update";
-        //             message.textContent = "";
-        //         } else {
-        //             // might happen if the list has been updated since last display
-        //             message.textContent = "The jobs entry was not found";
-        //             thisEvent = new Event("startDisplay");
-        //             document.dispatchEvent(thisEvent);
-        //         }
-        //     } catch (err) {
-        //         message.textContent = "A communications error has occurred.";
-        //     }
-        //     suspendInput = false;
-        // }
+        //section 5
+        else if (e.target.classList.contains("editButton")) {
+            editJob.dataset.id = e.target.dataset.id;
+            suspendInput = true;
+            try {
+                const response = await fetch(`/api/v1/transactions/${e.target.dataset.id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = await response.json();
+                console.log(data)
+                if (response.status === 200) {
+                    transType.value = data.transaction.transType;
+                    category.value = data.transaction.category;
+                    amount.value = data.transaction.amount;
+                    showing.style.display = "none";
+                    showing = editJob;
+                    showing.style.display = "block";
+                    addingJob.textContent = "update";
+                    message.textContent = "";
+                } else {
+                    // might happen if the list has been updated since last display
+                    message.textContent = "The jobs entry was not found";
+                    thisEvent = new Event("startDisplay");
+                    document.dispatchEvent(thisEvent);
+                }
+            } catch (err) {
+                message.textContent = "A communications error has occurred.";
+            }
+            suspendInput = false;
+        }
     })
 });
