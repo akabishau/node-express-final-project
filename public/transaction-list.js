@@ -68,9 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const jobsTableHeader = document.getElementById("jobs-table-header");
     const addJob = document.getElementById("add-job");
     const editJob = document.getElementById("edit-job");
-    const company = document.getElementById("company");
-    const position = document.getElementById("position");
-    const status = document.getElementById("status");
+    const transType = document.getElementById("transType");
+    const category = document.getElementById("category");
+    const amount = document.getElementById("amount");
     const addingJob = document.getElementById("adding-job");
     const jobsMessage = document.getElementById("jobs-message");
     const editCancel = document.getElementById("edit-cancel");
@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             token = null;
             showing.style.display = "none";
             logonRegister.style.display = "block";
+            logoff.style.display = "none"
             showing = logonRegister;
             jobsTable.replaceChildren(jobsTableHeader); // don't want other users to see
             message.textContent = "You are logged off.";
@@ -213,20 +214,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 suspendInput = false;
             }
         } // section 4
+
         else if (e.target === addJob) {
             showing.style.display = "none";
             editJob.style.display = "block";
             showing = editJob;
             delete editJob.dataset.id;
-            company.value = "";
-            position.value = "";
-            status.value = "pending";
+            transType.value = "expense";
+            category.value = "";
+            amount.value = "";
             addingJob.textContent = "add";
         } else if (e.target === editCancel) {
             showing.style.display = "none";
-            company.value = "";
-            position.value = "";
-            status.value = "pending";
+            transType.value = "expense";
+            category.value = "";
+            amount.value = "";
             thisEvent = new Event("startDisplay");
             document.dispatchEvent(thisEvent);
         } else if (e.target === addingJob) {
@@ -235,28 +237,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 // this is an attempted add
                 suspendInput = true;
                 try {
-                    const response = await fetch("/api/v1/jobs", {
+                    const response = await fetch("/api/v1/transactions", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
                         },
                         body: JSON.stringify({
-                            company: company.value,
-                            position: position.value,
-                            status: status.value,
+                            transType: transType.value,
+                            category: category.value,
+                            amount: amount.value,
                         }),
                     });
                     const data = await response.json();
                     if (response.status === 201) {
                         //successful create
-                        message.textContent = "The job entry was created.";
+                        message.textContent = "The transaction entry was created.";
                         showing.style.display = "none";
                         thisEvent = new Event("startDisplay");
                         document.dispatchEvent(thisEvent);
-                        company.value = "";
-                        position.value = "";
-                        status.value = "pending";
+                        transType.value = "expense";
+                        category.value = "";
+                        amount.value = "";
                     } else {
                         // failure
                         message.textContent = data.msg;
