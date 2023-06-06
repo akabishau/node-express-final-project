@@ -1,4 +1,4 @@
-async function buildJobsTable(jobsTable, jobsTableHeader, token, message) {
+async function buildJobsTable(transactionsTable, transTableHeader, token, message) {
     try {
         const response = await fetch("/api/v1/transactions", {
             method: "GET",
@@ -8,10 +8,10 @@ async function buildJobsTable(jobsTable, jobsTableHeader, token, message) {
             },
         });
         const data = await response.json();
-        var children = [jobsTableHeader];
+        var children = [transTableHeader];
         if (response.status === 200) {
             if (data.count === 0) {
-                jobsTable.replaceChildren(...children); // clear this for safety
+                transactionsTable.replaceChildren(...children); // clear this for safety
                 return 0;
             } else {
                 for (let i = 0; i < data.transactions.length; i++) {
@@ -29,7 +29,7 @@ async function buildJobsTable(jobsTable, jobsTableHeader, token, message) {
                     rowEntry.innerHTML = rowHTML;
                     children.push(rowEntry);
                 }
-                jobsTable.replaceChildren(...children);
+                transactionsTable.replaceChildren(...children);
             }
             return data.count;
         } else {
@@ -60,16 +60,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const password2 = document.getElementById("password2");
     const registerButton = document.getElementById("register-button");
     const registerCancel = document.getElementById("register-cancel");
-    const jobs = document.getElementById("jobs");
-    const jobsTable = document.getElementById("jobs-table");
-    const jobsTableHeader = document.getElementById("jobs-table-header");
+    const transactions = document.getElementById("transactions");
+    const transactionsTable = document.getElementById("trans-table");
+    const transTableHeader = document.getElementById("trans-table-header");
     const addJob = document.getElementById("add-job");
     const editJob = document.getElementById("edit-job");
     const transType = document.getElementById("transType");
     const category = document.getElementById("category");
     const amount = document.getElementById("amount");
     const addingJob = document.getElementById("adding-job");
-    const jobsMessage = document.getElementById("jobs-message");
+    const transMessage = document.getElementById("trans-message");
     const editCancel = document.getElementById("edit-cancel");
 
 
@@ -85,20 +85,20 @@ document.addEventListener("DOMContentLoaded", () => {
             //if the user is logged in
             logoff.style.display = "block";
             const count = await buildJobsTable(
-                jobsTable,
-                jobsTableHeader,
+                transactionsTable,
+                transTableHeader,
                 token,
                 message
             );
             if (count > 0) {
-                jobsMessage.textContent = "";
-                jobsTable.style.display = "block";
+                transMessage.textContent = "";
+                transactionsTable.style.display = "block";
             } else {
-                jobsMessage.textContent = "There are no jobs to display for this user.";
-                jobsTable.style.display = "none";
+                transMessage.textContent = "There are no jobs to display for this user.";
+                transactionsTable.style.display = "none";
             }
-            jobs.style.display = "block";
-            showing = jobs;
+            transactions.style.display = "block";
+            showing = transactions;
         } else {
             logonRegister.style.display = "block";
         }
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
             logonRegister.style.display = "block";
             logoff.style.display = "none"
             showing = logonRegister;
-            jobsTable.replaceChildren(jobsTableHeader); // don't want other users to see
+            transactionsTable.replaceChildren(transTableHeader); // don't want other users to see
             message.textContent = "You are logged off.";
         } else if (e.target === logon) {
             showing.style.display = "none";
