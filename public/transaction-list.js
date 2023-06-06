@@ -308,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } 
         //section 5
         else if (e.target.classList.contains("editButton")) {
+            console.log(e.target.dataset.id)
             editJob.dataset.id = e.target.dataset.id;
             suspendInput = true;
             try {
@@ -339,6 +340,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 message.textContent = "A communications error has occurred.";
             }
             suspendInput = false;
+        }
+
+        // delete 
+        else if (e.target.classList.contains("deleteButton")) {
+            
+            const id = e.target.dataset.id
+            const url = `/api/v1/transactions/${id}`
+            console.log(id)
+            try {
+                const response = await fetch(url, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+
+                const data = response.json()
+                console.log(data)
+                if (response.status == 200) {
+                    message.textContent = "Transaction has been removed"
+                    thisEvent = new Event("startDisplay");
+                    document.dispatchEvent(thisEvent);
+                }
+
+            } catch (err) {
+                message.textContent = "A communications error has occurred."
+            }
         }
     })
 });
