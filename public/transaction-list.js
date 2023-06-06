@@ -1,5 +1,4 @@
 async function buildJobsTable(jobsTable, jobsTableHeader, token, message) {
-    console.log('buildJobsTable')
     try {
         const response = await fetch("/api/v1/transactions", {
             method: "GET",
@@ -9,7 +8,6 @@ async function buildJobsTable(jobsTable, jobsTableHeader, token, message) {
             },
         });
         const data = await response.json();
-        console.log(data)
         var children = [jobsTableHeader];
         if (response.status === 200) {
             if (data.count === 0) {
@@ -45,7 +43,6 @@ async function buildJobsTable(jobsTable, jobsTableHeader, token, message) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log('DOMContentLoaded')
     const logoff = document.getElementById("logoff");
     const message = document.getElementById("message");
     const logonRegister = document.getElementById("logon-register");
@@ -344,10 +341,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // delete 
         else if (e.target.classList.contains("deleteButton")) {
-            
             const id = e.target.dataset.id
             const url = `/api/v1/transactions/${id}`
-            console.log(id)
+            suspendInput = true
             try {
                 const response = await fetch(url, {
                     method: "DELETE",
@@ -356,8 +352,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 })
 
-                const data = response.json()
-                console.log(data)
                 if (response.status == 200) {
                     message.textContent = "Transaction has been removed"
                     thisEvent = new Event("startDisplay");
@@ -367,6 +361,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 message.textContent = "A communications error has occurred."
             }
+            suspendInput = false
         }
     })
 });
