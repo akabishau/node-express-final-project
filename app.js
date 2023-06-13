@@ -3,12 +3,24 @@ require('express-async-errors')
 const express = require('express')
 const app = express()
 
-// error handler
-const notFoundMiddleware = require('./middleware/not-found');
-const errorHandlerMiddleware = require('./middleware/error-handler');
 
-app.use(express.json());
+app.use(express.json())
+
 // extra packages
+const helmet = require('helmet')
+app.use(helmet())
+
+const cors = require('cors')
+app.use(cors())
+
+const xss = require('xss-clean')
+app.use(xss())
+
+const rateLimiter = require('express-rate-limit')
+app.set('trust proxy', 1) // to deploy on heroku (render.com ?)
+app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 })) // each IP 100 request per 15 minutes
+
+
 
 // routes
 app.get('/', (req, res) => {
@@ -22,7 +34,9 @@ const authenticateUser = require('./middleware/authentication')
 const transactionsRouter = require('./routes/transactions')
 app.use('/api/v1/transactions', authenticateUser, transactionsRouter)
 
-
+// error handler
+const notFoundMiddleware = require('./middleware/not-found')
+const errorHandlerMiddleware = require('./middleware/error-handler')
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
 

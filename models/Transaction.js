@@ -4,12 +4,12 @@ const TransactionSchema = new mongoose.Schema(
     {
         transType: {
             type: String,
-            enum: ['expense', 'income', 'transfer'],
+            enum: ['expense', 'income'],
             required: [true, 'Transaction type is required']
         },
         category: {
             type: String,
-            required: true
+            required: [true, 'Category is required']
         },
         amount: {
             type: Number,
@@ -18,7 +18,7 @@ const TransactionSchema = new mongoose.Schema(
         createdBy: {
             type: mongoose.Types.ObjectId,
             ref: 'User',
-            required: true
+            required: [true, 'Valid UserID is required']
         },
     },
     { timestamps: true }
